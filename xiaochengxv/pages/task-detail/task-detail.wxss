@@ -1,0 +1,9 @@
+.task-detail-scroll { padding: 24rpx; background: #fff; min-height: 100vh }
+.task-card { background: #fff; border-radius: 12rpx; padding: 24rpx; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04) }
+.task-title { font-size: 34rpx; font-weight: 700; color: #111; display: block; margin-bottom: 12rpx }
+.meta { font-size: 22rpx; color: #666; display:flex; gap: 18rpx; margin-bottom: 18rpx }
+.task-desc { font-size: 24rpx; color: #333; line-height: 1.8; margin-bottom: 20rpx }
+.actions { display:flex; gap: 16rpx }
+.apply { flex:1; background:#22c55e; color:#fff; height:72rpx; border-radius:36rpx }
+.contact { flex:1; background:#6366F1; color:#fff; height:72rpx; border-radius:36rpx }
+.empty { padding:40rpx; text-align:center; color:#999 }

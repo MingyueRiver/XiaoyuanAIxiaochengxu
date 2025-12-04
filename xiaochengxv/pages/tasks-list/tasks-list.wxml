@@ -1,0 +1,24 @@
+<view class="tasks-container">
+  <view class="search-bar">
+    <input placeholder="搜索任务标题或描述" bindinput="onSearchInput" value="{{keyword}}" />
+  </view>
+
+  <view wx:if="{{isLoading}}" class="loading">加载中...</view>
+
+  <view wx:if="{{!isLoading && filteredTasks.length === 0}}" class="empty">暂无任务</view>
+
+  <block wx:for="{{filteredTasks}}" wx:key="_id">
+    <view class="task-card" bindtap="goToTaskDetail" data-id="{{item._id}}">
+      <view class="task-header">
+        <text class="task-title">{{item.title}}</text>
+        <text class="task-reward">¥{{item.reward}}</text>
+      </view>
+      <view class="task-meta">
+        <text>{{item.location}}</text>
+        <text> · </text>
+        <text>{{item.postDate}}</text>
+      </view>
+      <view class="task-desc">{{item.description}}</view>
+    </view>
+  </block>
+</view>

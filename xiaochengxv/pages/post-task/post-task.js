@@ -214,9 +214,23 @@ Page({
 
       wx.showToast({ title: '任务发布成功！', icon: 'success' });
 
+      // 尝试通知上一个页面刷新（兼容多种页面名称）
+      try {
+        const pages = getCurrentPages();
+        if (pages.length >= 2) {
+          const prev = pages[pages.length - 2];
+          // 常见刷新方法
+          if (prev.loadMyTasks) prev.loadMyTasks();
+          if (prev.loadTasks) prev.loadTasks();
+          if (prev.onShow) prev.onShow();
+        }
+      } catch (e) {
+        console.warn('刷新上页失败', e);
+      }
+
       setTimeout(() => {
         wx.navigateBack();
-      }, 1500);
+      }, 800);
     } catch (error) {
       console.error('发布失败:', error);
       wx.showToast({ title: '发布失败，请重试', icon: 'none' });

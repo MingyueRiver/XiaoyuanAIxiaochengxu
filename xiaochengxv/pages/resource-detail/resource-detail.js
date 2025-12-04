@@ -5,12 +5,41 @@ Page({
   },
 
   onLoad(options) {
-    // 接收资源数据
-    const resource = JSON.parse(decodeURIComponent(options.resource));
-    this.setData({
-      resource,
-      parsedContent: this.parseContent(resource.content, resource.type)
-    });
+    // 支持两种调用形式：1) ?resource=<encodeURIComponent(JSON)> 2) ?id=<resourceId>
+    try {
+      if (options.resource) {
+        const resource = JSON.parse(decodeURIComponent(options.resource));
+        this.setData({ resource, parsedContent: this.parseContent(resource.content, resource.type) });
+        return;
+      }
+
+      if (options.id) {
+        const app = getApp();
+        const rid = options.id;
+        // 优先从全局 mock 数据查找
+        const found = (app.globalData.resources || []).find(r => r._id === rid || String(r.id) === String(rid));
+        if (found) {
+          this.setData({ resource: found, parsedContent: this.parseContent(found.content || found.desc || '', found.type || 'article') });
+          return;
+        }
+
+        // 回退：尝试请求接口获取（若后端实现）
+        app.request({ url: '/resources/list', data: { page: 1, pageSize: app.globalData.pageSize || 10 } }).then(res => {
+          const all = res.data?.resources || [];
+          const r = all.find(x => x._id === rid || String(x.id) === String(rid));
+          if (r) this.setData({ resource: r, parsedContent: this.parseContent(r.content || r.desc || '', r.type || 'article') });
+          else wx.showToast({ title: '资源未找到', icon: 'none' });
+        }).catch(() => {
+          wx.showToast({ title: '加载资源失败', icon: 'none' });
+        });
+        return;
+      }
+
+      wx.showToast({ title: '资源参数缺失', icon: 'none' });
+    } catch (err) {
+      console.error('解析资源失败', err);
+      wx.showToast({ title: '资源解析失败', icon: 'none' });
+    }
   },
 
   // 解析不同类型资源的内容

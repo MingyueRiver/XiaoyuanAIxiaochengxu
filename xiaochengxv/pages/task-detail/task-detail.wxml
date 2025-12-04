@@ -1,0 +1,23 @@
+<scroll-view class="task-detail-scroll" scroll-y>
+  <view class="task-card" wx:if="{{task}}">
+    <text class="task-title">{{task.title}}</text>
+    <view class="meta">
+      <text>悬赏：{{task.reward || task.price || '面议'}} 元</text>
+      <text>地点：{{task.location || '线上'}}</text>
+      <text>截止：{{task.deadline || '无'}}</text>
+    </view>
+
+    <view class="task-desc">
+      <rich-text nodes="{{task.description || task.desc || ''}}"></rich-text>
+    </view>
+
+    <view class="actions">
+      <button bindtap="onApplyTap" class="apply">申请任务</button>
+      <button bindtap="onContactTap" class="contact">联系发布者</button>
+    </view>
+  </view>
+
+  <view wx:if="{{!task}}" class="empty">
+    <text>正在加载任务详情...</text>
+  </view>
+</scroll-view>

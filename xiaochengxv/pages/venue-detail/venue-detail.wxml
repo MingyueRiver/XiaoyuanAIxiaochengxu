@@ -1,0 +1,25 @@
+<scroll-view class="venue-scroll" scroll-y>
+  <image src="{{venue.image || '/images/venue-default.png'}}" class="venue-cover" mode="widthFix"></image>
+
+  <view class="venue-info" wx:if="{{venue}}">
+    <text class="venue-name">{{venue.name}}</text>
+    <view class="meta">
+      <text>类型：{{venue.type}}</text>
+      <text>地点：{{venue.location}}</text>
+      <text>价格：¥{{venue.pricePerHour}}/小时</text>
+    </view>
+
+    <view class="facilities">
+      <text>设施：</text>
+      <view class="chips">
+        <text wx:for="{{venue.facilities}}" wx:key="{{index}}" class="chip">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="desc">{{venue.description}}</view>
+
+    <button bindtap="onBook" class="book-btn">立即预约</button>
+  </view>
+
+  <view wx:if="{{!venue}}" class="empty">正在加载场地详情...</view>
+</scroll-view>

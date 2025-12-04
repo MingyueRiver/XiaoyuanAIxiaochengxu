@@ -59,8 +59,8 @@ Page({
     
     try {
       const res = await app.request({
-        url: '/tasks/my-tasks',
-        data: { page: this.data.currentPage, pageSize: this.data.pageSize }
+          url: '/tasks/my-tasks',
+          data: { page: this.data.currentPage, pageSize: getApp().globalData.pageSize || this.data.pageSize }
       });
 
       const tasks = res.data?.tasks || this.getMockMyTasks();

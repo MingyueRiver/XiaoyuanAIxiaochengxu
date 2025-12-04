@@ -37,11 +37,25 @@ Page({
     },
     filterTypes: ['全部', '教室', '讨论室', '运动场', '其他'],
     filterPrices: ['全部', '0-20元', '20-50元', '50+元']
+    ,
+    // 分页
+    currentPage: 1,
+    pageSize: 10,
+    totalVenues: 0
   },
 
-  onLoad() {
+  onLoad(options) {
     console.log('【预约场地】页面加载');
     this.checkAuth();
+    // 支持从分类页带参数跳转，例如 ?filterType=图书馆研讨室
+    if (options?.filterType) {
+      this.setData({ searchKeyword: decodeURIComponent(options.filterType) });
+    }
+
+    // 支持直接带场地 id 跳转并预选
+    if (options?.selectedVenueId) {
+      this.preselectVenueId = options.selectedVenueId;
+    }
   },
 
   onShow() {
@@ -71,30 +85,34 @@ Page({
   },
 
   // 加载场地列表
-  async loadVenues() {
+  async loadVenues(page = 1) {
     this.setData({ isLoading: true });
 
     try {
-      const res = await app.request({
-        url: '/venues/list',
-        data: { page: 1, pageSize: 20 }
-      });
-
+      const res = await app.request({ url: '/venues/list', data: { page, pageSize: getApp().globalData.pageSize || this.data.pageSize } });
       const venues = res.data?.venues || this.getMockVenues();
-      this.setData({
-        venues,
-        isLoading: false,
-        isEmpty: venues.length === 0
-      });
+      const total = res.data?.total || venues.length;
+
+      if (page === 1) {
+        this.setData({ venues, isLoading: false, isEmpty: venues.length === 0, currentPage: 1, totalVenues: total });
+      } else {
+        this.setData({ venues: [...this.data.venues, ...venues], isLoading: false, isEmpty: (this.data.venues.length + venues.length) === 0, currentPage: page, totalVenues: total });
+      }
+
       this.filterVenues();
+      // 如果有预选场地 id，尝试选中
+      if (this.preselectVenueId) {
+        const v = this.data.venues.find(x => x._id === this.preselectVenueId || String(x.id) === String(this.preselectVenueId));
+        if (v) {
+          // 模拟事件结构以复用 selectVenue
+          this.selectVenue({ currentTarget: { dataset: { id: v._id } } });
+        }
+        this.preselectVenueId = null;
+      }
     } catch (error) {
       console.error('加载场地失败:', error);
       const mockVenues = this.getMockVenues();
-      this.setData({
-        venues: mockVenues,
-        isLoading: false,
-        isEmpty: mockVenues.length === 0
-      });
+      this.setData({ venues: mockVenues, isLoading: false, isEmpty: mockVenues.length === 0 });
       this.filterVenues();
     }
   },
@@ -136,7 +154,7 @@ Page({
 
     // 评分过滤
     if (this.data.selectedFilters.rating !== 'all') {
-      const minRating = parseFloat(this.data.selectedFilters.rating);
+      const minRating = Number.parseFloat(this.data.selectedFilters.rating);
       filtered = filtered.filter(v => v.rating >= minRating);
     }
 
@@ -162,6 +180,15 @@ Page({
       showVenueDetail: true,
       bookingDate: this.getDefaultDate()
     });
+  },
+
+  onReachBottom() {
+    const next = this.data.currentPage + 1;
+    if (this.data.venues.length >= this.data.totalVenues && this.data.totalVenues > 0) {
+      wx.showToast({ title: '已加载全部场地', icon: 'none' });
+      return;
+    }
+    this.loadVenues(next);
   },
 
   // 关闭详情
@@ -193,7 +220,7 @@ Page({
     const idx = e.detail.value;
     const startTime = this.data.timeSlots[idx];
     // 自动设置结束时间为开始时间后1小时
-    const startHour = parseInt(startTime);
+    const startHour = Number.parseInt(startTime, 10);
     const endHour = startHour + 1;
     const endTime = String(endHour).padStart(2, '0') + ':00';
     
@@ -215,8 +242,8 @@ Page({
       return 0;
     }
 
-    const startHour = parseInt(this.data.startTime);
-    const endHour = parseInt(this.data.endTime);
+    const startHour = Number.parseInt(this.data.startTime, 10);
+    const endHour = Number.parseInt(this.data.endTime, 10);
     const hours = Math.max(1, endHour - startHour);
     const pricePerHour = this.data.selectedVenue.pricePerHour;
 
@@ -239,8 +266,8 @@ Page({
       return false;
     }
 
-    const startHour = parseInt(this.data.startTime);
-    const endHour = parseInt(this.data.endTime);
+    const startHour = Number.parseInt(this.data.startTime, 10);
+    const endHour = Number.parseInt(this.data.endTime, 10);
 
     if (endHour <= startHour) {
       wx.showToast({ title: '结束时间必须晚于开始时间', icon: 'none' });
@@ -266,7 +293,7 @@ Page({
     };
 
     try {
-      const res = await app.request({
+      await app.request({
         url: '/venues/book',
         method: 'POST',
         data: payload
@@ -274,13 +301,24 @@ Page({
 
       wx.showToast({ title: '预约成功！', icon: 'success' });
 
+      // 尝试通知上一个页面刷新（例如我的预约）
+      try {
+        const pages = getCurrentPages();
+        if (pages.length >= 2) {
+          const prev = pages[pages.length - 2];
+          if (prev.loadMyBookings) prev.loadMyBookings();
+          if (prev.loadBookings) prev.loadBookings();
+          if (prev.onShow) prev.onShow();
+        }
+      } catch (e) {
+        console.warn('刷新上页失败', e);
+      }
+
       setTimeout(() => {
-        wx.navigateTo({
-          url: '/pages/booking-confirmation/booking-confirmation'
-        }).catch(() => {
+        wx.navigateTo({ url: '/pages/booking-confirmation/booking-confirmation' }).catch(() => {
           wx.navigateBack();
         });
-      }, 1500);
+      }, 800);
     } catch (error) {
       console.error('预约失败:', error);
       wx.showToast({ title: '预约失败，请重试', icon: 'none' });

@@ -75,18 +75,39 @@ Page({
     // 获取点击的二级分类ID和名称（从wxml的data-id和data-name中获取）
     const { id, name } = e.currentTarget.dataset;
 
-    // 显示提示（告诉你已经点击成功，后续可替换为真实跳转）
-    wx.showToast({
-      title: `进入「${name}」列表`,
-      icon: 'none',
-      duration: 1500
-    });
+    // 根据一级分类类型跳转到不同的列表页（通过 dataset.type 传入）
+    const firstType = e.currentTarget.dataset.type || this.data.activeFirst || '';
 
-    // （可选）如果要跳转到具体的列表页，替换上面的showToast为以下代码：
-    // wx.navigateTo({
-    //   url: `/pages/category-detail/category-detail?id=${id}&name=${name}`,
-    //   // 跳转时携带分类ID和名称，方便列表页筛选数据
-    // });
+    if (firstType === 'venues') {
+      wx.navigateTo({ url: `/pages/book-venue/book-venue?filterType=${encodeURIComponent(name)}` }).catch(() => {
+        wx.showToast({ title: '无法打开场地列表', icon: 'none' });
+      });
+      return;
+    }
+
+    if (firstType === 'tasks') {
+      wx.navigateTo({ url: `/pages/tasks-list/tasks-list?category=${encodeURIComponent(name)}` }).catch(() => {
+        wx.showToast({ title: '无法打开任务列表', icon: 'none' });
+      });
+      return;
+    }
+
+    if (firstType === 'resources') {
+      wx.navigateTo({ url: `/pages/resource-center/resource-center?type=${encodeURIComponent(name)}` }).catch(() => {
+        wx.showToast({ title: '无法打开资源列表', icon: 'none' });
+      });
+      return;
+    }
+
+    if (firstType === 'activities') {
+      // 好物（活动/二手/好物）暂时复用资源中心显示，可以根据 name 带上标识
+      wx.navigateTo({ url: `/pages/resource-center/resource-center?type=${encodeURIComponent(name)}&activities=1` }).catch(() => {
+        wx.showToast({ title: '无法打开好物列表', icon: 'none' });
+      });
+      return;
+    }
+
+    wx.showToast({ title: `进入「${name}」列表`, icon: 'none', duration: 1500 });
   },
 
   /**

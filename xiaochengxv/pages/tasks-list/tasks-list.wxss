@@ -1,0 +1,9 @@
+.tasks-container { padding: 24rpx; }
+.search-bar input { width: 100%; padding: 20rpx; border-radius: 12rpx; border: 1rpx solid #eee; }
+.task-card { background: #fff; padding: 24rpx; border-radius: 12rpx; margin-top: 20rpx; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.06); }
+.task-header { display:flex; justify-content:space-between; align-items:center; }
+.task-title { font-size: 30rpx; color:#111; }
+.task-reward { color: #6366F1; font-weight: bold; }
+.task-meta { color:#666; font-size:24rpx; margin-top:12rpx }
+.task-desc { color:#333; margin-top:12rpx }
+.loading, .empty { text-align:center; color:#888; padding:40rpx 0 }

@@ -60,7 +60,7 @@ Page({
     try {
       const res = await app.request({
         url: '/venues/my-bookings',
-        data: { page: this.data.currentPage, pageSize: this.data.pageSize }
+        data: { page: this.data.currentPage, pageSize: getApp().globalData.pageSize || this.data.pageSize }
       });
 
       const bookings = res.data?.bookings || this.getMockMyBookings();

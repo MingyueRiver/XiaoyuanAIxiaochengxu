@@ -24,6 +24,9 @@ Page({
     isGrid: true,
     activeType: 'all',
     activeStatus: 'all',
+    currentPage: 1,
+    pageSize: 10,
+    totalResources: 0,
     currentTab: 'resource', // 核心修复：定义底部导航当前选中项（默认资源中心）
     typeMap: {
       all: '全部',
@@ -50,6 +53,25 @@ Page({
   },
 
   onLoad(options) {
+    // 如果从分类页跳转可带入 type 参数（例如 ?type=学习笔记）
+    if (options?.type) {
+      // 这里保持 activeType 为 key（尽量匹配 typeMap 的 key），支持中文名称与 key 映射
+      const raw = decodeURIComponent(options.type);
+      const map = {
+        '文章': 'article', '笔记': 'note', '模板': 'template', '工具': 'tool',
+        '学习笔记': 'note', '办公模板': 'template', '视频教程': 'article', '工具软件': 'tool',
+        '文献资料': 'article', '素材资源': 'tool'
+      };
+      const key = map[raw] || (this.data.typeMap && Object.keys(this.data.typeMap).includes(raw) ? raw : (this.data.typeMap && this.data.typeMap[raw]) || 'all');
+      // 如果 key 看起来是中文（在 typeMap 中没有对应），尝试通过 reverse mapping
+      const finalKey = map[raw] || (Object.keys(this.data.typeMap).includes(raw) ? raw : (map[raw] || 'all'));
+      this.setData({ activeType: finalKey });
+    }
+
+    // 支持 activities 标识（好物）
+    if (options?.activities) {
+      this.setData({ isActivities: true });
+    }
     this.filterResources();
     this.checkResourceCovers();
   },
@@ -57,6 +79,36 @@ Page({
   onShow() {
     // 修复：页面显示时更新底部导航选中项
     this.setData({ currentTab: 'resource' });
+    // 从后端或 mock 加载资源列表，确保发布后能同步显示
+    if (getApp().globalData.useMock) {
+      this.loadResources();
+    }
+  },
+
+  // 从接口加载资源，支持分页
+  async loadResources(page = 1) {
+    this.setData({ isLoading: true });
+    try {
+      const res = await getApp().request({ url: '/resources/list', data: { page, pageSize: getApp().globalData.pageSize || this.data.pageSize } });
+      const resources = res.data?.resources || [];
+      const pageSize = getApp().globalData.pageSize || this.data.pageSize;
+      const total = res.data?.total || (resources.length + (page - 1) * pageSize);
+
+      if (page === 1) {
+        this.setData({ allResources: resources, currentPage: 1, totalResources: total });
+      } else {
+        this.setData({ allResources: [...this.data.allResources, ...resources], currentPage: page, totalResources: total });
+      }
+
+      this.setData({ isLoading: false });
+      this.checkResourceCovers();
+      this.filterResources();
+    } catch (err) {
+      console.error('加载资源失败', err);
+      this.setData({ isLoading: false });
+      this.checkResourceCovers();
+      this.filterResources();
+    }
   },
 
   // 检查资源封面图（无图时用默认图）
@@ -138,7 +190,15 @@ Page({
       this.setData({ activeStatus: value }, () => this.filterResources());
     }
 
-    const filterName = type === 'type' ? this.data.typeMap[value] : (value === 'free' ? '免费' : value === 'paid' ? '付费' : value === 'hot' ? '热门' : '全部');
+    let filterName = '全部';
+    if (type === 'type') {
+      filterName = this.data.typeMap[value] || '全部';
+    } else {
+      if (value === 'free') filterName = '免费';
+      else if (value === 'paid') filterName = '付费';
+      else if (value === 'hot') filterName = '热门';
+      else filterName = '全部';
+    }
     wx.showToast({ title: `已筛选${filterName}资源`, icon: 'none', duration: 500 });
   },
 
@@ -208,6 +268,11 @@ Page({
 
   // 上拉加载更多
   onReachBottom() {
-    wx.showToast({ title: '已加载全部资源', icon: 'none' });
+    const next = this.data.currentPage + 1;
+    if (this.data.allResources.length >= this.data.totalResources && this.data.totalResources > 0) {
+      wx.showToast({ title: '已加载全部资源', icon: 'none' });
+      return;
+    }
+    this.loadResources(next);
   }
 });

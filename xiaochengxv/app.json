@@ -3,6 +3,7 @@
     "pages/index/index",
     "pages/category/category", 
     "pages/resource-center/resource-center", 
+    "pages/resource-detail/resource-detail",
     "pages/login/login",
     "pages/register/register",
     "pages/profile/profile",
@@ -11,12 +12,15 @@
     "pages/my-bookings/my-bookings",
     "pages/post-task/post-task",
     "pages/book-venue/book-venue",
+    "pages/venue-detail/venue-detail",
     "pages/upload-resource/upload-resource"
+    ,"pages/tasks-list/tasks-list"
+    ,"pages/task-detail/task-detail"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#6366F1",
-    "navigationBarTitleText": "校园AI资源共享平台",
+    "navigationBarTitleText": "知舟",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#F8FAFC",
     "enablePullDownRefresh": true

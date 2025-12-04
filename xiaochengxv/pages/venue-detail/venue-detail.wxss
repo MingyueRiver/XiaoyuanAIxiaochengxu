@@ -1,0 +1,10 @@
+.venue-scroll { min-height: 100vh; background: #fff }
+.venue-cover { width:100%; height:auto }
+.venue-info { padding: 24rpx }
+.venue-name { display:block; font-size:36rpx; font-weight:700; margin-bottom:12rpx }
+.meta { font-size:22rpx; color:#666; display:flex; gap:18rpx; margin-bottom:14rpx }
+.facilities { margin-bottom:14rpx }
+.chip { padding:6rpx 12rpx; background:#f1f5f9; border-radius:16rpx; margin-right:8rpx; display:inline-block; color:#334155 }
+.desc { font-size:24rpx; color:#333; margin-bottom:20rpx }
+.book-btn { width:100%; height:78rpx; background:#6366F1; color:#fff; border-radius:40rpx }
+.empty { padding:40rpx; text-align:center; color:#999 }

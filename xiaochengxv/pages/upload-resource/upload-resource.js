@@ -237,7 +237,7 @@ Page({
     };
 
     try {
-      const res = await app.request({
+      await app.request({
         url: '/resources/upload',
         method: 'POST',
         data: payload
@@ -245,9 +245,21 @@ Page({
 
       wx.showToast({ title: '资源发布成功！', icon: 'success' });
 
+      // 尝试通知上一个页面刷新资源列表
+      try {
+        const pages = getCurrentPages();
+        if (pages.length >= 2) {
+          const prev = pages[pages.length - 2];
+          if (prev.loadResources) prev.loadResources();
+          if (prev.onShow) prev.onShow();
+        }
+      } catch (e) {
+        console.warn('刷新上页失败', e);
+      }
+
       setTimeout(() => {
         wx.navigateBack();
-      }, 1500);
+      }, 800);
     } catch (error) {
       console.error('发布失败:', error);
       wx.showToast({ title: '发布失败，请重试', icon: 'none' });

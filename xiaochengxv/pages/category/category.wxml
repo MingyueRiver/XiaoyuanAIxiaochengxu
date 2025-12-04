@@ -22,11 +22,12 @@
     <!-- 有二级分类时显示网格 -->
     <view class="second-category-grid" wx:if="{{currentSecondCategories.length > 0}}">
       <view class="second-category-item"
-            wx:for="{{currentSecondCategories}}"
-            wx:key="id"
-            bindtap="goToDetail"
-            data-id="{{item.id}}"
-            data-name="{{item.name}}">
+        wx:for="{{currentSecondCategories}}"
+        wx:key="id"
+        bindtap="goToDetail"
+        data-id="{{item.id}}"
+        data-name="{{item.name}}"
+        data-type="{{activeFirst}}">
         <text class="second-icon">{{item.icon}}</text>
         <text class="second-name">{{item.name}}</text>
       </view>
