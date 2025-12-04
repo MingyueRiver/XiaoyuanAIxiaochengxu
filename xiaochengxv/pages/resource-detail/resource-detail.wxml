@@ -1,0 +1,30 @@
+<scroll-view class="detail-scroll" scroll-y>
+  <!-- 资源封面 -->
+  <image class="detail-cover" src="{{resource.coverUrl || '/images/resource-default.png'}}" mode="widthFix"></image>
+  
+  <!-- 资源信息 -->
+  <view class="detail-info">
+    <text class="detail-title">{{resource.title}}</text>
+    <view class="detail-meta">
+      <text class="author">👤 {{resource.author}}</text>
+      <text class="views">👁️ {{resource.views}}次浏览</text>
+      <text class="tag">{{resource.type === 'article' ? '文章' : resource.type === 'note' ? '笔记' : resource.type === 'template' ? '模板' : '工具'}}</text>
+    </view>
+    
+    <!-- 资源内容（文章/笔记显示文本，模板/工具显示下载说明） -->
+    <view class="detail-content">
+      <rich-text nodes="{{parsedContent}}"></rich-text>
+      
+      <!-- 模板/工具专属：下载链接 -->
+      <view wx:if="{{resource.type === 'template' || resource.type === 'tool'}}" class="download-tip">
+        <text class="tip-text">📌 下载说明：</text>
+        <text class="tip-desc">{{resource.isFree ? '点击下方按钮免费下载' : '购买后即可下载'}}</text>
+      </view>
+    </view>
+    
+    <!-- 操作按钮（下载/购买） -->
+    <button class="action-btn {{resource.isFree ? 'free-btn' : 'paid-btn'}}" bindtap="handleAction">
+      {{resource.isFree ? '免费下载' : '付费购买（￥9.9）'}}
+    </button>
+  </view>
+</scroll-view>

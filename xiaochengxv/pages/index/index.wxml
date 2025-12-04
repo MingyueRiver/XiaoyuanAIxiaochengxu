@@ -1,0 +1,170 @@
+<view class="container">
+  <!-- 顶部状态栏（原有，不变） -->
+  <view class="status-bar">
+    <view class="location" bindtap="updateLocation">
+      <text class="location-text">📍 {{currentLocation || '定位中...'}}</text>
+    </view>
+    <view class="user-info" wx:if="{{userInfo}}" bindtap="goToProfile">
+      <text class="user-name">👤 你好，{{userInfo.userName}}</text>
+    </view>
+    <view class="user-info" wx:else bindtap="goToLogin">
+      <text class="user-name">👤 点击登录</text>
+    </view>
+  </view>
+
+  <!-- 搜索框（原有，不变） -->
+  <view class="search-section">
+    <view class="search-box" bindtap="goToSearch">
+      <text class="search-text">🔍 搜索场地、任务、资源...</text>
+    </view>
+  </view>
+
+  <!-- 新增：优质资源文章推荐区域（搜索框下方，AI推荐上方） -->
+  <view class="high-quality-section">
+    <!-- 栏目标题 -->
+    <view class="hq-header">
+      <text class="hq-title">优质资源</text>
+      <view class="hq-more" bindtap="goToResourceCenter">
+        <text class="more-text">查看更多</text>
+        <text class="more-icon">→</text>
+      </view>
+    </view>
+
+    <!-- 文章推荐卡片（1-2篇，横向滚动） -->
+    <scroll-view scroll-x class="hq-article-scroll" enable-flex>
+      <view class="hq-article-card" wx:for="{{highQualityArticles}}" wx:key="id" bindtap="goToArticleDetail" data-id="{{item.id}}">
+        <!-- 文章封面 -->
+        <view class="hq-article-cover">
+          <image src="{{item.coverUrl || '/images/article-default.png'}}" mode="aspectFill"></image>
+        </view>
+        <!-- 文章信息 -->
+        <view class="hq-article-info">
+          <text class="hq-article-title">{{item.title}}</text>
+          <text class="hq-article-desc">{{item.desc}}</text>
+          <view class="hq-article-meta">
+            <text class="hq-author">👤 {{item.author}}</text>
+            <text class="hq-views">👁️ {{item.views}}次</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- AI推荐区域（原有，不变） -->
+  <view class="recommendation-section">
+    <view class="section-header">
+      <text class="section-title">智能推荐</text>
+      <text class="section-desc">为您精心挑选的内容</text>
+    </view>
+
+    <!-- 推荐标签 -->
+    <view class="recommend-tags">
+      <view class="tag {{activeTag === 'all' ? 'active' : ''}}" bindtap="switchTag" data-tag="all">全部</view>
+      <view class="tag {{activeTag === 'venues' ? 'active' : ''}}" bindtap="switchTag" data-tag="venues">场地</view>
+      <view class="tag {{activeTag === 'tasks' ? 'active' : ''}}" bindtap="switchTag" data-tag="tasks">任务</view>
+      <view class="tag {{activeTag === 'resources' ? 'active' : ''}}" bindtap="switchTag" data-tag="resources">资源</view>
+    </view>
+
+    <!-- 推荐内容 -->
+    <view class="recommend-content">
+      <!-- 场地推荐 -->
+      <view class="recommend-card" wx:if="{{activeTag === 'all' || activeTag === 'venues'}}">
+        <view class="card-header">
+          <text class="card-title">🏢 推荐场地</text>
+          <text class="card-more" bindtap="goToVenueList">更多</text>
+        </view>
+        <view class="card-content">
+          <view class="venue-item" wx:for="{{aiRecommendations.venues}}" wx:key="_id" bindtap="viewVenueDetail" data-id="{{item._id}}">
+            <view class="venue-image">🏛️</view>
+            <view class="venue-info">
+              <text class="venue-name">{{item.name}}</text>
+              <text class="venue-location">📍 {{item.location}}</text>
+              <view class="venue-tags">
+                <text class="venue-tag" wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
+              </view>
+              <view class="venue-stats">
+                <text class="venue-rating">⭐ {{item.stats.rating}}</text>
+                <text class="venue-match {{item.matchLevel}}">匹配度: {{item.matchScore}}%</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 任务推荐 -->
+      <view class="recommend-card" wx:if="{{activeTag === 'all' || activeTag === 'tasks'}}">
+        <view class="card-header">
+          <text class="card-title">📋 推荐任务</text>
+          <text class="card-more" bindtap="goToTaskList">更多</text>
+        </view>
+        <view class="card-content">
+          <view class="task-item" wx:for="{{aiRecommendations.tasks}}" wx:key="_id" bindtap="viewTaskDetail" data-id="{{item._id}}">
+            <view class="task-main">
+              <text class="task-title">{{item.title}}</text>
+              <text class="task-desc">{{item.description}}</text>
+              <view class="task-meta">
+                <text class="task-reward">💰 ￥{{item.reward}}</text>
+                <text class="task-location">📍 {{item.location}}</text>
+                <text class="task-time">⏰ {{item.timeLeft}}</text>
+              </view>
+            </view>
+            <view class="task-side">
+              <text class="task-urgency {{item.urgency}}">{{item.urgencyText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 资源推荐 -->
+      <view class="recommend-card" wx:if="{{activeTag === 'all' || activeTag === 'resources'}}">
+        <view class="card-header">
+          <text class="card-title">📚 推荐资源</text>
+          <text class="card-more" bindtap="goToResourceList">更多</text>
+        </view>
+        <view class="card-content">
+          <view class="resource-grid">
+            <view class="resource-item" wx:for="{{aiRecommendations.resources}}" wx:key="_id" bindtap="viewResourceDetail" data-id="{{item._id}}">
+              <view class="resource-cover">📖</view>
+              <view class="resource-info">
+                <text class="resource-title">{{item.title}}</text>
+                <text class="resource-type">{{item.type}}</text>
+                <text class="resource-price {{item.isFree ? 'free' : 'paid'}}">
+                  {{item.isFree ? '🆓 免费' : '💰 ￥' + item.price}}
+                </text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷操作（原有，不变） -->
+  <view class="quick-actions">
+    <view class="action-item" bindtap="postTask">
+      <text class="action-icon">📝</text>
+      <text>发布任务</text>
+    </view>
+    <view class="action-item" bindtap="bookVenue">
+      <text class="action-icon">🏢</text>
+      <text>预约场地</text>
+    </view>
+    <view class="action-item" bindtap="uploadResource">
+      <text class="action-icon">📚</text>
+      <text>分享资源</text>
+    </view>
+  </view>
+
+  <!-- 加载状态（原有，不变） -->
+  <view wx:if="{{isLoading}}" class="loading">
+    <text>⏳ 加载中...</text>
+  </view>
+
+  <!-- 空状态（原有，不变） -->
+  <view wx:if="{{!isLoading && !hasData}}" class="empty-state">
+    <text class="empty-icon">😴</text>
+    <text class="empty-text">暂无推荐内容</text>
+    <text class="empty-desc">登录后获取个性化推荐</text>
+    <button class="empty-action" bindtap="goToLogin">立即登录</button>
+  </view>
+</view>

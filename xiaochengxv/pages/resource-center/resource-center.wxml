@@ -1,0 +1,138 @@
+<view class="resource-center-page">
+  <!-- 顶部搜索栏 + 筛选区 -->
+  <view class="header-container">
+    <!-- 搜索框 -->
+    <view class="search-box" bindtap="goToSearch">
+      <text class="search-icon">🔍</text>
+      <text class="search-text">搜索资源名称、类型或标签...</text>
+    </view>
+
+    <!-- 筛选栏：类型筛选 + 状态筛选 -->
+    <view class="filter-container">
+      <!-- 类型筛选（横向滚动）- 兼容 typeFilterList 未定义 -->
+      <scroll-view scroll-x class="type-filter-scroll" enable-flex>
+        <view class="filter-item {{activeType === item.key ? 'active' : ''}}"
+              wx:for="{{typeFilterList || []}}"
+              wx:key="key"
+              bindtap="switchFilter"
+              data-type="type"
+              data-value="{{item.key}}">
+          <text class="filter-text">{{item.name}}</text>
+        </view>
+      </scroll-view>
+
+      <!-- 状态筛选（横向滚动）- 兼容 statusFilterList 未定义 -->
+      <scroll-view scroll-x class="status-filter-scroll" enable-flex>
+        <view class="filter-item {{activeStatus === item.key ? 'active' : ''}}"
+              wx:for="{{statusFilterList || []}}"
+              wx:key="key"
+              bindtap="switchFilter"
+              data-type="status"
+              data-value="{{item.key}}">
+          <text class="filter-text">{{item.name}}</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 排序 + 布局切换 -->
+    <view class="operation-bar">
+      <view class="sort-group">
+        <view class="sort-item" bindtap="sortResources" data-type="views">
+          <text class="sort-icon">👁️</text>
+          <text class="sort-text">浏览量</text>
+        </view>
+        <view class="sort-item" bindtap="sortResources" data-type="time">
+          <text class="sort-icon">⏱️</text>
+          <text class="sort-text">最新</text>
+        </view>
+      </view>
+      <view class="layout-btn" bindtap="toggleLayout">
+        <text class="layout-icon">{{isGrid ? '📋' : '🟦'}}</text>
+        <text class="layout-text">{{isGrid ? '列表' : '网格'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 资源展示区 - 核心修复：移除可选链 ?. -->
+  <view class="resource-content">
+    <!-- 加载状态 -->
+    <view class="loading-container" wx:if="{{isLoading}}">
+      <text class="loading-icon">⏳</text>
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <!-- 网格布局 - 修复：用 && 替代 ?. 做兼容判断 -->
+    <view class="grid-layout" wx:elif="{{isGrid && filteredResources && filteredResources.length > 0}}">
+      <view class="resource-card"
+            wx:for="{{filteredResources}}"
+            wx:key="id"
+            bindtap="goToDetail"
+            data-id="{{item.id}}">
+        <!-- 资源封面图 - 默认图兜底 -->
+        <view class="card-cover">
+          <image src="{{item.coverUrl || '/images/resource-default.png'}}" mode="aspectFill"></image>
+          <!-- 免费/付费标签 -->
+          <view class="tag {{item.isFree ? 'free-tag' : 'paid-tag'}}">
+            <text class="tag-text">{{item.isFree ? '免费' : '¥' + (item.price || 0)}}</text>
+          </view>
+        </view>
+        <!-- 资源信息 -->
+        <view class="card-info">
+          <text class="card-title">{{item.title || '未知资源'}}</text>
+          <text class="card-desc">{{item.desc || '暂无描述'}}</text>
+          <view class="card-meta">
+            <text class="meta-author">{{item.author || '未知作者'}}</text>
+            <text class="meta-separator">·</text>
+            <text class="meta-views">{{item.views || 0}}次浏览</text>
+            <text class="meta-separator">·</text>
+            <text class="meta-collect">{{item.collectCount || 0}}人收藏</text>
+          </view>
+          <text class="card-time">{{item.updateTime || '暂无更新时间'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 列表布局 - 修复：用 && 替代 ?. 做兼容判断 -->
+    <view class="list-layout" wx:elif="{{!isGrid && filteredResources && filteredResources.length > 0}}">
+      <view class="resource-item"
+            wx:for="{{filteredResources}}"
+            wx:key="id"
+            bindtap="goToDetail"
+            data-id="{{item.id}}">
+        <!-- 资源封面图 - 默认图兜底 -->
+        <view class="item-cover">
+          <image src="{{item.coverUrl || '/images/resource-default.png'}}" mode="aspectFill"></image>
+          <view class="tag {{item.isFree ? 'free-tag' : 'paid-tag'}}">
+            <text class="tag-text">{{item.isFree ? '免费' : '¥' + (item.price || 0)}}</text>
+          </view>
+        </view>
+        <!-- 资源信息 -->
+        <view class="item-info">
+          <text class="item-title">{{item.title || '未知资源'}}</text>
+          <text class="item-desc">{{item.desc || '暂无描述'}}</text>
+          <view class="item-meta">
+            <view class="meta-left">
+              <text class="meta-author">{{item.author || '未知作者'}}</text>
+              <text class="meta-separator">·</text>
+              <text class="meta-type">{{typeMap[item.type] || item.type || '未知类型'}}</text>
+              <text class="meta-separator">·</text>
+              <text class="meta-time">{{item.updateTime || '暂无更新时间'}}</text>
+            </view>
+            <view class="meta-right">
+              <text class="meta-views">{{item.views || 0}}次浏览</text>
+              <text class="meta-separator">·</text>
+              <text class="meta-collect">{{item.collectCount || 0}}人收藏</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 无数据提示 -->
+    <view class="empty-container" wx:else>
+      <text class="empty-icon">📂</text>
+      <text class="empty-text">暂无符合条件的资源</text>
+      <text class="empty-subtext">换个筛选条件试试吧~</text>
+    </view>
+  </view>
+ </view> 

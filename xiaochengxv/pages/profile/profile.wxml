@@ -1,0 +1,71 @@
+<view class="profile-container">
+  <!-- 用户信息 -->
+  <view class="user-card">
+    <view class="user-header">
+      <!-- 移除图片，使用文字头像 -->
+      <view class="user-avatar">
+        <text class="avatar-text">{{userInfo && userInfo.userName ? userInfo.userName.charAt(0) : '?'}}</text>
+      </view>
+      <view class="user-info">
+        <text class="user-name">{{userInfo.userName || '未登录'}}</text>
+        <text class="user-email">{{userInfo.email || ''}}</text>
+      </view>
+    </view>
+    
+    <view class="user-stats">
+      <view class="stat-item">
+        <text class="stat-value">{{userInfo && userInfo.stats && userInfo.stats.postedTasks ? userInfo.stats.postedTasks : 0}}</text>
+        <text class="stat-label">发布任务</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{userInfo && userInfo.stats && userInfo.stats.acceptedTasks ? userInfo.stats.acceptedTasks : 0}}</text>
+        <text class="stat-label">接受任务</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{userInfo && userInfo.credit && userInfo.credit.score ? userInfo.credit.score : 100}}</text>
+        <text class="stat-label">信用分</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="goToMyTasks">
+      <text class="menu-icon">📋</text>
+      <text class="menu-text">我的任务</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    
+    <view class="menu-item" bindtap="goToMyBookings">
+      <text class="menu-icon">📅</text>
+      <text class="menu-text">我的预约</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    
+    <view class="menu-item" bindtap="goToMyResources">
+      <text class="menu-icon">📚</text>
+      <text class="menu-text">我的资源</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 设置 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="goToSettings">
+      <text class="menu-icon">⚙️</text>
+      <text class="menu-text">设置</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    
+    <view class="menu-item" bindtap="onLogout" wx:if="{{userInfo}}">
+      <text class="menu-icon">🚪</text>
+      <text class="menu-text logout-text">退出登录</text>
+    </view>
+  </view>
+
+  <!-- 未登录状态 -->
+  <view wx:if="{{!userInfo}}" class="not-logged-in">
+    <text class="not-logged-text">您还未登录</text>
+    <button class="login-button" bindtap="goToLogin">立即登录</button>
+  </view>
+</view>

@@ -1,0 +1,123 @@
+/* 全局样式：优化基础配色与字体 */
+page {
+  background-color: #F8FAFC; /* 更柔和的浅背景，比 #f8f9fa 更显高级 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, sans-serif;
+  color: #334155; /* 全局文字主色，更易读 */
+  line-height: 1.6; /* 全局行高，提升可读性 */
+}
+
+/* 通用按钮样式：强化质感+渐变+精致交互 */
+.common-button {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6); /* 主题紫渐变，更显大气 */
+  color: white;
+  border: none;
+  border-radius: 20rpx; /* 大圆角，更柔和 */
+  padding: 24rpx 32rpx; /* 左右内边距加宽，点击区域更大 */
+  font-size: 32rpx;
+  font-weight: 500; /* 加粗文字，提升存在感 */
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6rpx 20rpx rgba(99, 102, 241, 0.2); /* 柔化阴影，增加立体感 */
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* 顺滑过渡动画 */
+  cursor: pointer;
+}
+
+/* 按钮点击态：加深颜色+缩小阴影，反馈明显 */
+.common-button:active {
+  background: linear-gradient(135deg, #5B5CDD, #7C3AED); /* 渐变加深 */
+  box-shadow: 0 4rpx 12rpx rgba(99, 102, 241, 0.15); /* 阴影缩小 */
+  transform: translateY(2rpx); /* 轻微下沉，模拟按压感 */
+}
+
+/* 按钮禁用态：补充适配，避免样式混乱 */
+.common-button:disabled {
+  background: linear-gradient(135deg, #E0E7FF, #DDD6FE);
+  color: #94A3B8;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.8;
+}
+
+/* 次要按钮样式（扩展：用于非核心操作） */
+.common-button.secondary {
+  background: linear-gradient(135deg, #F1F5F9, #E2E8F0);
+  color: #334155;
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.common-button.secondary:active {
+  background: linear-gradient(135deg, #E2E8F0, #CBD5E1);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
+}
+
+/* 输入框样式：优化边框+阴影+交互 */
+.common-input {
+  background: white;
+  border: 2rpx solid #E2E8F0; /* 加粗边框，更清晰 */
+  border-radius: 16rpx; /* 大圆角，与按钮呼应 */
+  padding: 24rpx 32rpx; /* 左右内边距加宽，输入更舒适 */
+  font-size: 28rpx;
+  color: #334155;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03); /* 极淡阴影，增加层次 */
+  transition: all 0.3s ease;
+  outline: none; /* 清除默认外边框 */
+}
+
+/* 输入框聚焦态：主题色边框+强化阴影 */
+.common-input:focus {
+  border-color: #6366F1;
+  box-shadow: 0 0 0 4rpx rgba(99, 102, 241, 0.15); /* 聚焦光晕，更醒目 */
+}
+
+/* 输入框禁用态：补充适配 */
+.common-input:disabled {
+  background: #F8FAFC;
+  border-color: #F1F5F9;
+  color: #94A3B8;
+  cursor: not-allowed;
+}
+
+/* 输入框占位文字样式：优化颜色 */
+.common-input::placeholder {
+  color: #94A3B8;
+  opacity: 0.8; /* 稍淡，不抢焦点 */
+}
+
+/* 卡片样式：强化立体层次+细节优化 */
+.common-card {
+  background: white;
+  border-radius: 20rpx; /* 大圆角，更显柔和 */
+  padding: 36rpx; /* 增加内边距，内容不拥挤 */
+  box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.05); /* 柔化阴影，更自然 */
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden; /* 防止内容溢出 */
+}
+
+/* 卡片hover态：加深阴影，增强交互（适用于可点击卡片） */
+.common-card:hover {
+  box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.08); /* 阴影加深，更有层次感 */
+  transform: translateY(-4rpx); /* 轻微上浮，反馈明显 */
+}
+
+/* 卡片头部装饰线（扩展：用于区分卡片类型） */
+.common-card.with-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8rpx;
+  height: 100%;
+  background: linear-gradient(180deg, #6366F1, #8B5CF6); /* 主题色装饰线 */
+}
+
+/* 卡片内边距变体（扩展：用于不同场景） */
+.common-card.small-padding {
+  padding: 24rpx;
+}
+
+.common-card.large-padding {
+  padding: 48rpx;
+}

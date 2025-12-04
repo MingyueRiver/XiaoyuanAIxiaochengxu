@@ -1,0 +1,55 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/category/category", 
+    "pages/resource-center/resource-center", 
+    "pages/login/login",
+    "pages/register/register",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#6366F1",
+    "navigationBarTitleText": "校园AI资源共享平台",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F8FAFC",
+    "enablePullDownRefresh": true
+  },
+  "tabBar": {
+    "color": "#64748B",
+    "selectedColor": "#6366F1",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tabbar/home.png", 
+        "selectedIconPath": "images/tabbar/home-active.png" 
+      },
+      {
+        "pagePath": "pages/category/category",
+        "text": "分类",
+        "iconPath": "images/tabbar/category.png",
+        "selectedIconPath": "images/tabbar/category-active.png"
+      },
+      {
+        "pagePath": "pages/resource-center/resource-center",
+        "text": "资源中心",
+        "iconPath": "images/tabbar/resource.png",
+        "selectedIconPath": "images/tabbar/resource-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/tabbar/mine.png",
+        "selectedIconPath": "images/tabbar/mine-active.png"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000
+  },
+  "debug": true,
+  "sitemapLocation": "sitemap.json" 
+}

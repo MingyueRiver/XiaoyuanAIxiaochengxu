@@ -1,0 +1,41 @@
+<view class="category-page">
+  <!-- 顶部导航栏 -->
+  <view class="page-nav">
+    <text class="nav-title">全部分类</text>
+    <text class="nav-subtitle">快速找到你需要的内容</text>
+  </view>
+
+  <!-- 一级分类（横向滚动） -->
+  <scroll-view scroll-x class="first-category-scroll" enable-flex>
+    <view class="first-category-item {{activeFirst === item.type ? 'active' : ''}}"
+          wx:for="{{firstCategories}}"
+          wx:key="type"
+          bindtap="switchFirstCategory"
+          data-type="{{item.type}}">
+      <text class="item-icon">{{item.icon}}</text>
+      <text class="item-name">{{item.name}}</text>
+    </view>
+  </scroll-view>
+
+  <!-- 二级分类区域 -->
+  <view class="second-category-area">
+    <!-- 有二级分类时显示网格 -->
+    <view class="second-category-grid" wx:if="{{currentSecondCategories.length > 0}}">
+      <view class="second-category-item"
+            wx:for="{{currentSecondCategories}}"
+            wx:key="id"
+            bindtap="goToDetail"
+            data-id="{{item.id}}"
+            data-name="{{item.name}}">
+        <text class="second-icon">{{item.icon}}</text>
+        <text class="second-name">{{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 无二级分类时显示提示（用之前美化的default-tip） -->
+    <view class="default-tip" wx:else>
+      <text class="tip-icon">📌</text>
+      <text class="tip-text">请选择上方一级分类</text>
+    </view>
+  </view>
+</view>

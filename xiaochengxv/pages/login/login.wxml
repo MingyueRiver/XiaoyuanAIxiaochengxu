@@ -1,0 +1,27 @@
+<view class="login-container">
+  <view class="login-card">
+    <view class="login-header">
+      <text class="login-title">校园AI资源共享平台</text>
+      <text class="login-subtitle">智能匹配 • 实时互助 • 知识共享</text>
+    </view>
+
+    <view class="login-form">
+      <view class="input-group">
+        <input class="login-input" placeholder="请输入用户名" bindinput="onInputUserName" value="{{userName}}" />
+      </view>
+
+      <view class="input-group">
+        <input class="login-input" password placeholder="请输入密码" bindinput="onInputPassword" value="{{password}}" />
+      </view>
+
+      <button class="login-button" bindtap="onLogin" disabled="{{isLoggingIn}}">
+        {{isLoggingIn ? '登录中...' : '登录'}}
+      </button>
+
+      <view class="login-links">
+        <text class="link-text" bindtap="goToRegister">立即注册</text>
+        <text class="link-text" bindtap="useTestAccount">使用测试账号</text>
+      </view>
+    </view>
+  </view>
+</view>

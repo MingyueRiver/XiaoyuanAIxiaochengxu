@@ -1,0 +1,160 @@
+/* 页面容器 */
+.category-page {
+  background-color: #F8FAFC;
+  min-height: 100vh;
+  padding-bottom: 100rpx; /* 留出底部tab栏空间 */
+}
+
+/* 顶部导航栏 */
+.page-nav {
+  padding: 40rpx 20rpx 20rpx;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  color: white;
+  border-bottom-left-radius: 30rpx;
+  border-bottom-right-radius: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(99, 102, 241, 0.2);
+}
+
+.nav-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  display: block;
+}
+
+.nav-subtitle {
+  font-size: 22rpx;
+  opacity: 0.9;
+  margin-top: 8rpx;
+  display: block;
+}
+
+/* 一级分类横向滚动容器 */
+.first-category-scroll {
+  padding: 20rpx;
+  white-space: nowrap;
+  margin-top: 20rpx;
+}
+
+/* 一级分类项 */
+.first-category-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 30rpx;
+  padding: 16rpx 10rpx;
+  background: white;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  width: 120rpx; /* 固定宽度，避免挤压 */
+}
+
+.first-category-item.active {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  color: white;
+  box-shadow: 0 6rpx 16rpx rgba(99, 102, 241, 0.2);
+}
+
+.item-icon {
+  font-size: 40rpx;
+  margin-bottom: 8rpx;
+}
+
+.item-name {
+  font-size: 22rpx;
+  text-align: center;
+}
+
+/* 二级分类区域 */
+.second-category-area {
+  padding: 20rpx;
+}
+
+/* 二级分类网格 */
+.second-category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+/* 二级分类项 */
+.second-category-item {
+  width: calc(33.33% - 14rpx); /* 3列布局 */
+  background: white;
+  border-radius: 16rpx;
+  padding: 24rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.second-category-item:hover {
+  transform: translateY(-4rpx);
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+.second-icon {
+  font-size: 50rpx;
+  color: #6366F1;
+  margin-bottom: 12rpx;
+}
+
+.second-name {
+  font-size: 24rpx;
+  color: #334155;
+  text-align: center;
+}
+
+/* 提示样式（复用之前美化的default-tip） */
+.default-tip {
+  text-align: center;
+  padding: 180rpx 40rpx;
+  color: #64748B;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tip-icon {
+  font-size: 120rpx;
+  margin-bottom: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+  color: #6366F1;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8rpx 30rpx rgba(99, 102, 241, 0.15);
+  animation: breathe 3s infinite ease-in-out;
+}
+
+.tip-text {
+  font-size: 32rpx;
+  font-weight: 500;
+  line-height: 1.8;
+  max-width: 650rpx;
+  padding: 20rpx 36rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #F8FAFC, #F1F5F9);
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.03);
+  color: #334155;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}

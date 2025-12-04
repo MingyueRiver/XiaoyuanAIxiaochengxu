@@ -1,0 +1,79 @@
+.detail-scroll {
+  min-height: 100vh;
+  background-color: #F8FAFC;
+}
+
+.detail-cover {
+  width: 100%;
+  height: auto;
+}
+
+.detail-info {
+  padding: 30rpx 20rpx;
+}
+
+.detail-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  font-size: 22rpx;
+  color: #999;
+  margin-bottom: 30rpx;
+}
+
+.detail-meta .tag {
+  padding: 4rpx 12rpx;
+  border-radius: 16rpx;
+  background-color: #f0f4ff;
+  color: #6366F1;
+}
+
+.detail-content {
+  margin-bottom: 40rpx;
+}
+
+.download-tip {
+  margin-top: 30rpx;
+  padding: 16rpx;
+  background-color: #f5fafe;
+  border-radius: 12rpx;
+}
+
+.tip-text {
+  font-size: 24rpx;
+  color: #6366F1;
+  font-weight: 600;
+}
+
+.tip-desc {
+  font-size: 22rpx;
+  color: #666;
+  margin-left: 8rpx;
+}
+
+.action-btn {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.free-btn {
+  background-color: #22c55e;
+  color: white;
+}
+
+.paid-btn {
+  background-color: #f59e0b;
+  color: white;
+}
