@@ -1,0 +1,221 @@
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-container">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="搜索场地名称或位置..."
+        placeholder-class="search-placeholder"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+      />
+    </view>
+  </view>
+
+  <!-- 筛选选项 -->
+  <view class="filter-container">
+    <scroll-view scroll-x class="filter-scroll">
+      <view class="filter-group">
+        <view
+          class="filter-btn {{selectedFilters.type === 'all' ? 'active' : ''}}"
+          bindtap="onFilterChange"
+          data-type="type"
+          data-value="all"
+        >
+          全部类型
+        </view>
+        <view
+          class="filter-btn {{selectedFilters.type === '教室' ? 'active' : ''}}"
+          bindtap="onFilterChange"
+          data-type="type"
+          data-value="教室"
+        >
+          教室
+        </view>
+        <view
+          class="filter-btn {{selectedFilters.type === '讨论室' ? 'active' : ''}}"
+          bindtap="onFilterChange"
+          data-type="type"
+          data-value="讨论室"
+        >
+          讨论室
+        </view>
+        <view
+          class="filter-btn {{selectedFilters.type === '运动场' ? 'active' : ''}}"
+          bindtap="onFilterChange"
+          data-type="type"
+          data-value="运动场"
+        >
+          运动场
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{isLoading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载场地中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{isEmpty}}" class="empty-container">
+    <text class="empty-icon">📍</text>
+    <text class="empty-title">暂无可用场地</text>
+    <text class="empty-desc">请稍候，场地信息加载中...</text>
+  </view>
+
+  <!-- 场地列表 -->
+  <scroll-view scroll-y class="venues-list">
+    <view class="venue-card" wx:for="{{filteredVenues}}" wx:key="_id" bindtap="selectVenue" data-id="{{item._id}}">
+      <!-- 场地图片 -->
+      <image src="{{item.image || '/images/venue-default.png'}}" class="venue-image" mode="aspectFill"></image>
+
+      <!-- 场地信息 -->
+      <view class="venue-info">
+        <view class="venue-header">
+          <text class="venue-name">{{item.name}}</text>
+          <text class="venue-type">{{item.type}}</text>
+        </view>
+
+        <text class="venue-location">📍 {{item.location}}</text>
+
+        <view class="venue-meta">
+          <text class="meta-item">👥 {{item.capacity}}人</text>
+          <text class="meta-item">⭐ {{item.rating}} ({{item.reviews}})</text>
+          <text class="price">¥{{item.pricePerHour}}/小时</text>
+        </view>
+
+        <view class="facilities">
+          <text wx:for="{{item.facilities}}" wx:key="*this" class="facility-tag">{{item}}</text>
+        </view>
+
+        <view class="venue-action">
+          <button class="action-btn">立即预约</button>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 预约详情弹窗 -->
+  <view class="modal-overlay {{showVenueDetail ? 'show' : ''}}" bindtap="closeVenueDetail"></view>
+  <view class="booking-modal {{showVenueDetail ? 'show' : ''}}">
+    <view class="modal-header">
+      <text class="modal-title">预约 {{selectedVenue.name}}</text>
+      <text class="close-btn" bindtap="closeVenueDetail">✕</text>
+    </view>
+
+    <!-- 预约表单 -->
+    <scroll-view scroll-y class="modal-content">
+      <!-- 场地信息摘要 -->
+      <view class="booking-summary">
+        <text class="summary-label">场地信息</text>
+        <view class="summary-item">
+          <text class="label">位置：</text>
+          <text class="value">{{selectedVenue.location}}</text>
+        </view>
+        <view class="summary-item">
+          <text class="label">容量：</text>
+          <text class="value">{{selectedVenue.capacity}} 人</text>
+        </view>
+        <view class="summary-item">
+          <text class="label">价格：</text>
+          <text class="value">¥{{selectedVenue.pricePerHour}}/小时</text>
+        </view>
+      </view>
+
+      <!-- 预约日期 -->
+      <view class="form-section">
+        <text class="form-label">预约日期</text>
+        <picker mode="date" value="{{bookingDate}}" start="{{bookingDate}}" bindchange="onDateChange">
+          <view class="picker-view">
+            <text class="picker-text">{{bookingDate}}</text>
+            <text class="picker-icon">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 开始时间 -->
+      <view class="form-section">
+        <text class="form-label">开始时间</text>
+        <picker
+          mode="selector"
+          range="{{timeSlots}}"
+          value="{{startTime}}"
+          range-key="name"
+          bindchange="onStartTimeChange"
+        >
+          <view class="picker-view">
+            <text class="picker-text">{{startTime}}</text>
+            <text class="picker-icon">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 结束时间 -->
+      <view class="form-section">
+        <text class="form-label">结束时间</text>
+        <picker
+          mode="selector"
+          range="{{timeSlots}}"
+          value="{{endTime}}"
+          range-key="name"
+          bindchange="onEndTimeChange"
+        >
+          <view class="picker-view">
+            <text class="picker-text">{{endTime}}</text>
+            <text class="picker-icon">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 备注 -->
+      <view class="form-section">
+        <text class="form-label">备注信息 (选填)</text>
+        <textarea
+          class="booking-textarea"
+          placeholder="如有特殊需求，请在此说明"
+          placeholder-class="input-placeholder"
+          maxlength="200"
+          value="{{notes}}"
+          bindinput="onNotesInput"
+        />
+      </view>
+
+      <!-- 费用计算 -->
+      <view class="cost-summary">
+        <view class="cost-row">
+          <text class="cost-label">场地价格：</text>
+          <text class="cost-value">¥{{selectedVenue.pricePerHour}}/小时</text>
+        </view>
+        <view class="cost-row">
+          <text class="cost-label">预约时长：</text>
+          <text class="cost-value">{{parseInt(endTime) - parseInt(startTime)}} 小时</text>
+        </view>
+        <view class="cost-divider"></view>
+        <view class="cost-row total">
+          <text class="cost-label">合计费用：</text>
+          <text class="cost-value-total">¥{{calculateTotal()}}</text>
+        </view>
+      </view>
+
+      <!-- 注意事项 -->
+      <view class="tips-box">
+        <text class="tips-title">预约须知</text>
+        <text class="tips-text">• 预约后，场地管理员将在24小时内确认</text>
+        <text class="tips-text">• 如需取消，请在预约时间前2小时取消</text>
+        <text class="tips-text">• 请提前15分钟到达场地进行签到</text>
+      </view>
+    </scroll-view>
+
+    <!-- 底部按钮 -->
+    <view class="modal-footer">
+      <button class="btn-cancel" bindtap="closeVenueDetail">取消</button>
+      <button class="btn-confirm {{isSubmitting ? 'disabled' : ''}}" bindtap="onSubmitBooking" disabled="{{isSubmitting}}">
+        {{isSubmitting ? '预约中...' : '确认预约'}}
+      </button>
+    </view>
+  </view>
+</view>

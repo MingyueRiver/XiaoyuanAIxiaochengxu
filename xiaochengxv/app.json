@@ -5,7 +5,13 @@
     "pages/resource-center/resource-center", 
     "pages/login/login",
     "pages/register/register",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/my-resources/my-resources",
+    "pages/my-tasks/my-tasks",
+    "pages/my-bookings/my-bookings",
+    "pages/post-task/post-task",
+    "pages/book-venue/book-venue",
+    "pages/upload-resource/upload-resource"
   ],
   "window": {
     "backgroundTextStyle": "light",

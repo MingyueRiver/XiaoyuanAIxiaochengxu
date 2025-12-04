@@ -58,25 +58,46 @@ Page({
   // 其他菜单项点击处理
   goToMyTasks() {
     if (!this.checkAuth()) return;
-    wx.showToast({
-      title: '我的任务功能开发中',
-      icon: 'none'
+    wx.navigateTo({
+      url: '/pages/my-tasks/my-tasks'
     });
   },
 
   goToMyBookings() {
     if (!this.checkAuth()) return;
-    wx.showToast({
-      title: '我的预约功能开发中',
-      icon: 'none'
+    wx.navigateTo({
+      url: '/pages/my-bookings/my-bookings'
     });
   },
 
   goToMyResources() {
     if (!this.checkAuth()) return;
-    wx.showToast({
-      title: '我的资源功能开发中',
-      icon: 'none'
+    wx.navigateTo({
+      url: '/pages/my-resources/my-resources'
+    });
+  },
+
+  // 发布新任务
+  postNewTask() {
+    if (!this.checkAuth()) return;
+    wx.navigateTo({
+      url: '/pages/post-task/post-task'
+    });
+  },
+
+  // 预约新场地
+  bookNewVenue() {
+    if (!this.checkAuth()) return;
+    wx.navigateTo({
+      url: '/pages/book-venue/book-venue'
+    });
+  },
+
+  // 分享新资源
+  uploadNewResource() {
+    if (!this.checkAuth()) return;
+    wx.navigateTo({
+      url: '/pages/upload-resource/upload-resource'
     });
   },
 

@@ -49,6 +49,28 @@
     </view>
   </view>
 
+  <!-- 创建菜单 -->
+  <view class="menu-section">
+    <text class="menu-section-title">快速创建</text>
+    <view class="menu-item" bindtap="postNewTask">
+      <text class="menu-icon">➕</text>
+      <text class="menu-text">发布新任务</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    
+    <view class="menu-item" bindtap="bookNewVenue">
+      <text class="menu-icon">🏢</text>
+      <text class="menu-text">预约场地</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    
+    <view class="menu-item" bindtap="uploadNewResource">
+      <text class="menu-icon">📤</text>
+      <text class="menu-text">分享资源</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
   <!-- 设置 -->
   <view class="menu-section">
     <view class="menu-item" bindtap="goToSettings">

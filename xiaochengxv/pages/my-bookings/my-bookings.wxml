@@ -1,0 +1,78 @@
+<view class="container">
+  <!-- 标签切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'upcoming' ? 'active' : ''}}" bindtap="switchTab" data-tab="upcoming">
+      <text>即将开始</text>
+    </view>
+    <view class="tab-item {{activeTab === 'past' ? 'active' : ''}}" bindtap="switchTab" data-tab="past">
+      <text>历史记录</text>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{isLoading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{isEmpty}}" class="empty-container">
+    <text class="empty-icon">📅</text>
+    <text class="empty-title">还没有预约</text>
+    <text class="empty-desc">预约校园场地，参加各种学习和活动</text>
+    <button class="book-btn" bindtap="bookNewVenue">立即预约场地</button>
+  </view>
+
+  <!-- 预约列表 -->
+  <view wx:else class="bookings-list">
+    <view class="booking-card" wx:for="{{filteredBookings}}" wx:key="_id">
+      <!-- 预约头部 -->
+      <view class="booking-header">
+        <image src="{{item.venueImage || '/images/venue-default.png'}}" class="venue-image" mode="aspectFill"></image>
+        <view class="booking-title-section">
+          <text class="venue-name">{{item.venueName}}</text>
+          <text class="venue-location">📍 {{item.location}}</text>
+          <view class="status-section">
+            <text class="status-badge {{item.status === '已确认' ? 'confirmed' : item.status === '已完成' ? 'completed' : item.status === '已取消' ? 'cancelled' : 'pending'}}">{{item.status}}</text>
+            <text class="booking-price">¥{{item.price}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 预约详情 -->
+      <view class="booking-details">
+        <view class="detail-row">
+          <text class="detail-label">📅 日期：</text>
+          <text class="detail-value">{{item.date}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">⏰ 时间：</text>
+          <text class="detail-value">{{item.startTime}} - {{item.endTime}} ({{item.duration}})</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">👥 容量：</text>
+          <text class="detail-value">{{item.capacity}} 人</text>
+        </view>
+      </view>
+
+      <!-- 预约信息 -->
+      <view class="booking-info">
+        <text class="booking-date">预约于 {{item.bookingDate}}</text>
+        <text wx:if="{{item.status === '已取消' && item.cancelReason}}" class="cancel-reason">取消原因: {{item.cancelReason}}</text>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="booking-actions">
+        <button class="action-btn detail-btn" bindtap="goToBookingDetail" data-id="{{item._id}}">详情</button>
+        <button wx:if="{{item.status !== '已完成' && item.status !== '已取消'}}" class="action-btn edit-btn" bindtap="editBooking" data-id="{{item._id}}">修改</button>
+        <button wx:if="{{item.status !== '已完成' && item.status !== '已取消'}}" class="action-btn cancel-btn" bindtap="cancelBooking" data-id="{{item._id}}">取消</button>
+        <button wx:if="{{item.status === '已确认' || item.status === '待确认'}}" class="action-btn contact-btn" bindtap="contactVenue" data-venue="{{item.venueName}}">联系管理员</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 预约新场地浮动按钮 -->
+  <view wx:if="{{!isEmpty && !isLoading}}" class="fab-container">
+    <button class="fab-button" bindtap="bookNewVenue">+</button>
+  </view>
+</view>

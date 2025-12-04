@@ -1,0 +1,155 @@
+<scroll-view scroll-y class="container">
+  <!-- 表单卡片 -->
+  <view class="form-container">
+    <!-- 任务标题 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">任务标题 <text class="required">*</text></text>
+        <text class="char-count">{{getTitleCount()}}/50</text>
+      </view>
+      <input
+        class="common-input"
+        type="text"
+        placeholder="请输入简洁的任务标题，5-50字"
+        placeholder-class="input-placeholder"
+        maxlength="50"
+        value="{{title}}"
+        bindinput="onInputTitle"
+      />
+      <text class="helper-text">例如：帮忙取快递、代写总结、调查问卷等</text>
+    </view>
+
+    <!-- 任务描述 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">任务描述 <text class="required">*</text></text>
+        <text class="char-count">{{getDescriptionCount()}}/500</text>
+      </view>
+      <textarea
+        class="common-textarea"
+        placeholder="详细描述任务内容、要求、注意事项等，10-500字"
+        placeholder-class="input-placeholder"
+        maxlength="500"
+        value="{{description}}"
+        bindinput="onInputDescription"
+        style="height: 180rpx;"
+      />
+      <text class="helper-text">详细的描述能吸引更多人参与</text>
+    </view>
+
+    <!-- 任务分类 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">任务分类 <text class="required">*</text></text>
+      </view>
+      <picker class="common-picker" value="{{category}}" bindchange="onCategoryChange" range="{{selectedCategories}}">
+        <view class="picker-view">
+          <text class="picker-text">{{category}}</text>
+          <text class="picker-icon">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 任务地点 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">任务地点 <text class="required">*</text></text>
+      </view>
+      <picker class="common-picker" value="{{location}}" bindchange="onLocationChange" range="{{selectedLocations}}">
+        <view class="picker-view">
+          <text class="picker-text">{{location || '请选择地点'}}</text>
+          <text class="picker-icon">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 报酬金额 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">报酬金额 <text class="required">*</text></text>
+      </view>
+      <view class="input-group">
+        <text class="currency">¥</text>
+        <input
+          class="amount-input"
+          type="number"
+          placeholder="10"
+          placeholder-class="input-placeholder"
+          min="1"
+          max="999"
+          value="{{reward}}"
+          bindinput="onInputReward"
+        />
+        <text class="amount-unit">元</text>
+      </view>
+      <text class="helper-text">合理的报酬能让更多人接受你的任务</text>
+    </view>
+
+    <!-- 紧急度 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">紧急程度</text>
+      </view>
+      <view class="urgency-buttons">
+        <button
+          wx:for="{{urgencyOptions}}"
+          wx:key="value"
+          class="urgency-btn {{urgency === item.value ? 'active ' + item.value : ''}}"
+          data-value="{{item.value}}"
+          bindtap="onUrgencyChange"
+        >
+          {{item.text}}
+        </button>
+      </view>
+    </view>
+
+    <!-- 截止日期 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">截止日期 <text class="required">*</text></text>
+      </view>
+      <picker
+        class="common-picker date-picker"
+        mode="date"
+        value="{{deadline}}"
+        start="{{getMinDate()}}"
+        bindchange="onDeadlineChange"
+      >
+        <view class="picker-view">
+          <text class="picker-text">{{deadline}}</text>
+          <text class="picker-icon">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 信息提示 -->
+    <view class="tips-container">
+      <view class="tip-item">
+        <text class="tip-icon">💡</text>
+        <view class="tip-content">
+          <text class="tip-title">任务发布建议</text>
+          <text class="tip-text">标题简洁、描述详细、报酬合理能大幅提高接受率</text>
+        </view>
+      </view>
+      <view class="tip-item warning">
+        <text class="tip-icon">⚠️</text>
+        <view class="tip-content">
+          <text class="tip-title">注意事项</text>
+          <text class="tip-text">不要发布违法内容，违规任务将被删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="button-group">
+    <button class="btn-secondary" bindtap="saveDraft">保存草稿</button>
+    <button class="btn-secondary" bindtap="clearForm">清空</button>
+  </view>
+
+  <view class="button-group">
+    <button class="btn-primary {{isSubmitting ? 'disabled' : ''}}" bindtap="onSubmit" disabled="{{isSubmitting}}">
+      {{isSubmitting ? '发布中...' : '发布任务'}}
+    </button>
+  </view>
+</scroll-view>

@@ -16,7 +16,8 @@ App({
   globalData: {
     userInfo: null,  // 全局用户信息，供 pages/index/index.js 等页面使用
     baseURL: 'https://api.example.com',  // ⚠️ 替换为你实际的后端地址，需在微信开发者后台配置
-    useMock: true  // 【开发模式】设为 true 使用模拟数据，设为 false 使用真实后端
+    useMock: true,  // 【开发模式】设为 true 使用模拟数据，设为 false 使用真实后端
+    myTasks: []  // 用户发布的任务列表
   },
 
   request(options) {
@@ -65,6 +66,39 @@ App({
         const { url, data } = options;
 
         console.log('【MOCK 请求】', url, data);
+
+        // 任务创建接口
+        if (url === '/tasks/create') {
+          const newTask = {
+            _id: Math.random().toString(36).substring(2, 11),
+            ...data,
+            status: '招募中',
+            applicants: 0,
+            acceptedBy: null,
+            postDate: new Date().toISOString().split('T')[0],
+            createdBy: this.globalData.userInfo?.userId || 'user123'
+          };
+          this.globalData.myTasks.push(newTask);
+          resolve({
+            success: true,
+            code: 200,
+            message: '任务发布成功',
+            data: newTask
+          });
+          return;
+        }
+
+        // 获取我的任务接口
+        if (url === '/tasks/my-tasks') {
+          resolve({
+            success: true,
+            code: 200,
+            data: {
+              tasks: this.globalData.myTasks
+            }
+          });
+          return;
+        }
 
         // 注册接口
           if (url === '/auth/register') {

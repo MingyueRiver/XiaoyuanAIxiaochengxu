@@ -90,6 +90,16 @@
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.08);
 }
 
+.menu-section-title {
+  display: block;
+  padding: 24rpx 32rpx 16rpx;
+  font-size: 24rpx;
+  color: #999;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1rpx;
+}
+
 .menu-item {
   display: flex;
   align-items: center;

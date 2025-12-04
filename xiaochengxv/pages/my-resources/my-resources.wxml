@@ -1,0 +1,71 @@
+<view class="container">
+  <!-- 标签切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'all' ? 'active' : ''}}" bindtap="switchTab" data-tab="all">
+      <text>全部</text>
+    </view>
+    <view class="tab-item {{activeTab === 'notes' ? 'active' : ''}}" bindtap="switchTab" data-tab="notes">
+      <text>笔记</text>
+    </view>
+    <view class="tab-item {{activeTab === 'videos' ? 'active' : ''}}" bindtap="switchTab" data-tab="videos">
+      <text>视频</text>
+    </view>
+    <view class="tab-item {{activeTab === 'documents' ? 'active' : ''}}" bindtap="switchTab" data-tab="documents">
+      <text>文档</text>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{isLoading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{isEmpty}}" class="empty-container">
+    <text class="empty-icon">📚</text>
+    <text class="empty-title">还没有资源</text>
+    <text class="empty-desc">分享你的学习资料，帮助其他学生</text>
+    <button class="upload-btn" bindtap="uploadNewResource">上传第一个资源</button>
+  </view>
+
+  <!-- 资源列表 -->
+  <view wx:else class="resources-list">
+    <view class="resource-card" wx:for="{{filteredResources}}" wx:key="_id">
+      <!-- 资源封面和基本信息 -->
+      <view class="resource-header">
+        <image src="{{item.coverUrl || '/images/resource-default.png'}}" class="resource-cover" mode="aspectFill"></image>
+        <view class="resource-info">
+          <text class="resource-type-badge">{{item.type}}</text>
+          <text class="resource-title">{{item.title}}</text>
+          <text class="resource-desc">{{item.description}}</text>
+          <view class="resource-meta">
+            <text class="meta-item">👁️ {{item.views}}</text>
+            <text class="meta-item">⬇️ {{item.downloads}}</text>
+            <text class="meta-item">⭐ {{item.stats.rating}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 价格和操作按钮 -->
+      <view class="resource-footer">
+        <view class="price-info">
+          <text wx:if="{{item.isFree}}" class="free-badge">免费</text>
+          <text wx:else class="price">¥{{item.price}}</text>
+          <text class="upload-date">上传于 {{item.uploadDate}}</text>
+        </view>
+        
+        <view class="action-buttons">
+          <button class="action-btn primary-btn" bindtap="goToResourceDetail" data-id="{{item._id}}">查看</button>
+          <button class="action-btn secondary-btn" bindtap="editResource" data-id="{{item._id}}">编辑</button>
+          <button class="action-btn danger-btn" bindtap="deleteResource" data-id="{{item._id}}">删除</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 上传新资源浮动按钮 -->
+  <view wx:if="{{!isEmpty && !isLoading}}" class="fab-container">
+    <button class="fab-button" bindtap="uploadNewResource">+</button>
+  </view>
+</view>

@@ -1,0 +1,85 @@
+<view class="container">
+  <!-- 标签切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'posted' ? 'active' : ''}}" bindtap="switchTab" data-tab="posted">
+      <text>已发布</text>
+    </view>
+    <view class="tab-item {{activeTab === 'accepted' ? 'active' : ''}}" bindtap="switchTab" data-tab="accepted">
+      <text>进行中</text>
+    </view>
+    <view class="tab-item {{activeTab === 'completed' ? 'active' : ''}}" bindtap="switchTab" data-tab="completed">
+      <text>已完成</text>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{isLoading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{isEmpty}}" class="empty-container">
+    <text class="empty-icon">📋</text>
+    <text class="empty-title">还没有任务</text>
+    <text class="empty-desc">发布任务让别人帮你完成，或接受别人的任务赚取报酬</text>
+    <button class="post-btn" bindtap="postNewTask">发布第一个任务</button>
+  </view>
+
+  <!-- 任务列表 -->
+  <view wx:else class="tasks-list">
+    <view class="task-card" wx:for="{{filteredTasks}}" wx:key="_id">
+      <!-- 任务头部 -->
+      <view class="task-header">
+        <view class="task-title-section">
+          <text class="task-title">{{item.title}}</text>
+          <view class="task-badges">
+            <text class="status-badge {{item.status === '招募中' ? 'recruiting' : item.status === '进行中' ? 'ongoing' : 'completed'}}">{{item.status}}</text>
+            <text class="urgency-badge {{item.urgency === 'high' ? 'high' : item.urgency === 'medium' ? 'medium' : 'low'}}">{{item.urgencyText}}</text>
+          </view>
+        </view>
+        <text class="task-reward">¥{{item.reward}}</text>
+      </view>
+
+      <!-- 任务描述 -->
+      <view class="task-body">
+        <text class="task-description">{{item.description}}</text>
+        <view class="task-details">
+          <view class="detail-item">
+            <text class="detail-label">📍</text>
+            <text class="detail-text">{{item.location}}</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">📅</text>
+            <text class="detail-text">截止 {{item.deadline}}</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">👥</text>
+            <text class="detail-text">{{item.applicants}} 人报名</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 任务信息 -->
+      <view class="task-info">
+        <view class="info-left">
+          <text class="post-date">发布于 {{item.postDate}}</text>
+          <text wx:if="{{item.acceptedBy}}" class="accepted-by">已由 {{item.acceptedBy}} 接受</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="task-actions">
+        <button class="action-btn detail-btn" bindtap="goToTaskDetail" data-id="{{item._id}}">详情</button>
+        <button wx:if="{{item.status === '招募中'}}" class="action-btn edit-btn" bindtap="editTask" data-id="{{item._id}}">编辑</button>
+        <button wx:if="{{item.status === '招募中'}}" class="action-btn cancel-btn" bindtap="cancelTask" data-id="{{item._id}}">取消</button>
+        <button wx:if="{{item.status === '进行中'}}" class="action-btn complete-btn" bindtap="completeTask" data-id="{{item._id}}">完成</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发布新任务浮动按钮 -->
+  <view wx:if="{{!isEmpty && !isLoading}}" class="fab-container">
+    <button class="fab-button" bindtap="postNewTask">+</button>
+  </view>
+</view>

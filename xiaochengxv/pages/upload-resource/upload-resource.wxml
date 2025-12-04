@@ -1,0 +1,191 @@
+<scroll-view scroll-y class="container">
+  <view class="form-container">
+    <!-- 资源封面 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">资源封面</text>
+      </view>
+      <view class="cover-uploader">
+        <view wx:if="{{!coverImage}}" class="cover-placeholder" bindtap="chooseCover">
+          <text class="placeholder-icon">📸</text>
+          <text class="placeholder-text">点击上传封面</text>
+        </view>
+        <view wx:else class="cover-preview">
+          <image src="{{coverImage}}" mode="aspectFill"></image>
+          <view class="cover-action">
+            <text class="action-text" bindtap="chooseCover">更换</text>
+            <text class="action-text delete" bindtap="removeCover">删除</text>
+          </view>
+        </view>
+      </view>
+      <text class="helper-text">建议尺寸：16:9，支持JPG/PNG</text>
+    </view>
+
+    <!-- 资源标题 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">资源标题 <text class="required">*</text></text>
+        <text class="char-count">{{title.length}}/100</text>
+      </view>
+      <input
+        class="common-input"
+        type="text"
+        placeholder="请输入资源标题，5-100字"
+        placeholder-class="input-placeholder"
+        maxlength="100"
+        value="{{title}}"
+        bindinput="onInputTitle"
+      />
+    </view>
+
+    <!-- 资源描述 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">资源描述 <text class="required">*</text></text>
+        <text class="char-count">{{description.length}}/500</text>
+      </view>
+      <textarea
+        class="common-textarea"
+        placeholder="详细描述资源内容、应用场景、核心价值等"
+        placeholder-class="input-placeholder"
+        maxlength="500"
+        value="{{description}}"
+        bindinput="onInputDescription"
+        style="height: 150rpx;"
+      />
+    </view>
+
+    <!-- 资源分类 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">资源分类 <text class="required">*</text></text>
+      </view>
+      <picker class="common-picker" value="{{category}}" bindchange="onCategoryChange" range="{{selectedCategories}}">
+        <view class="picker-view">
+          <text class="picker-text">{{category}}</text>
+          <text class="picker-icon">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 资源类型 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">资源类型 <text class="required">*</text></text>
+      </view>
+      <picker class="common-picker" value="{{resourceType}}" bindchange="onTypeChange" range="{{selectedTypes}}">
+        <view class="picker-view">
+          <text class="picker-text">{{resourceType}}</text>
+          <text class="picker-icon">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 价格设置 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">价格设置 <text class="required">*</text></text>
+      </view>
+      
+      <view class="price-toggle">
+        <view class="toggle-option {{isFree ? 'active' : ''}}" bindtap="onFreeToggle" data-value="{{true}}">
+          <text class="toggle-text">免费分享</text>
+        </view>
+        <view class="toggle-option {{!isFree ? 'active' : ''}}" bindtap="onFreeToggle" data-value="{{false}}">
+          <text class="toggle-text">付费出售</text>
+        </view>
+      </view>
+
+      <view wx:if="{{!isFree}}" class="price-input-group">
+        <text class="currency">¥</text>
+        <input
+          class="amount-input"
+          type="number"
+          placeholder="9.99"
+          placeholder-class="input-placeholder"
+          min="0.01"
+          max="999"
+          value="{{price}}"
+          bindinput="onInputPrice"
+        />
+        <text class="amount-unit">元</text>
+      </view>
+      <text class="helper-text">合理的价格能获得更多购买者</text>
+    </view>
+
+    <!-- 标签选择 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">标签 <text class="required">*</text></text>
+        <text class="char-count">{{selectedTags.length}}/5</text>
+      </view>
+      <view class="tags-container">
+        <view
+          class="tag-btn {{selectedTags.includes(tag) ? 'selected' : ''}}"
+          wx:for="{{suggestedTags}}"
+          wx:key="*this"
+          bindtap="toggleTag"
+          data-tag="{{tag}}"
+        >
+          {{tag}}
+        </view>
+      </view>
+      <text class="helper-text">选择相关标签，最多5个，方便他人查找</text>
+    </view>
+
+    <!-- 文件上传 -->
+    <view class="form-section">
+      <view class="form-label">
+        <text class="label-text">上传文件 <text class="required">*</text></text>
+      </view>
+      
+      <view wx:if="{{!fileUrl}}" class="file-uploader" bindtap="chooseFile">
+        <text class="uploader-icon">📁</text>
+        <text class="uploader-title">选择文件</text>
+        <text class="uploader-desc">点击选择资源文件（最大100MB）</text>
+      </view>
+
+      <view wx:else class="file-preview">
+        <view class="file-info">
+          <text class="file-icon">📄</text>
+          <view class="file-details">
+            <text class="file-name">{{fileName}}</text>
+            <text class="file-size">{{formatFileSize(fileSize)}}</text>
+          </view>
+        </view>
+        <text class="remove-file" bindtap="removeFile">删除</text>
+      </view>
+
+      <text class="helper-text">支持多种格式：PDF, DOC, XLS, ZIP等</text>
+    </view>
+
+    <!-- 分享提示 -->
+    <view class="tips-container">
+      <view class="tip-item">
+        <text class="tip-icon">💡</text>
+        <view class="tip-content">
+          <text class="tip-title">分享建议</text>
+          <text class="tip-text">清晰的描述、合理的价格和相关的标签能吸引更多人下载或购买</text>
+        </view>
+      </view>
+      <view class="tip-item warning">
+        <text class="tip-icon">⚠️</text>
+        <view class="tip-content">
+          <text class="tip-title">内容规范</text>
+          <text class="tip-text">不要分享侵权内容，违规资源将被删除并可能被封禁</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="button-group">
+    <button class="btn-secondary" bindtap="saveDraft">保存草稿</button>
+  </view>
+
+  <view class="button-group">
+    <button class="btn-primary {{isSubmitting ? 'disabled' : ''}}" bindtap="onSubmit" disabled="{{isSubmitting}}">
+      {{isSubmitting ? '发布中...' : '发布资源'}}
+    </button>
+  </view>
+</scroll-view>
